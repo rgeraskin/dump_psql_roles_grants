@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# pylint: disable=missing-module-docstring,missing-function-docstring
+# pylint: disable=missing-module-docstring,missing-function-docstring,unspecified-encoding
 # flake8: noqa E501
 
 import json
@@ -58,8 +58,7 @@ def get_tables_info(dbname, user, host, password):
 
     def get_schemas(cur):
         ignore_columns = ["Name"]
-        return get_something(cur, cmd.get_schemas, ignore_columns,
-                             ignores.schema)
+        return get_something(cur, cmd.get_schemas, ignore_columns, ignores.schema)
 
     def get_owners(cur, schema):
         cmddt = (cmd.dt).replace("PLACEHOLDER", schema)
@@ -100,7 +99,7 @@ def main():
         if input_ in ignores.inputs:
             continue
 
-        with open(os.path.join(inputs_dir, file_name)) as f:  # pylint: disable=unspecified-encoding
+        with open(os.path.join(inputs_dir, file_name)) as f:
             instances = json.load(f)
 
         for _, conn_info in instances.items():
@@ -116,9 +115,9 @@ def main():
                     continue
                 count_str = f"{count:03}/{databases_number}"
                 ic(count_str, dbname)
-                result[input_]["databases"][dbname][
-                    "schemas"] = get_tables_info(**conn_info
-                                                 | {"dbname": dbname})  # pylint: disable=undefined-loop-variable
+                result[input_]["databases"][dbname]["schemas"] = get_tables_info(
+                    **conn_info | {"dbname": dbname}
+                )  # pylint: disable=undefined-loop-variable
     return result
 
 

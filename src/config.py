@@ -1,39 +1,19 @@
-# pylint: disable=missing-module-docstring
+# pylint: disable=missing-module-docstring,missing-function-docstring
+# pylint: disable=unspecified-encoding
+
+import yaml
 
 from classes import Ignores
 
-inputs_dir = "./inputs"
+CONFIG_FILE = "config.yaml"
 
-ignores = Ignores(
-    inputs=[
-        "stage",
-        "test",
-        "prod",
-    ],
-    db=[
-        "postgres",
-        "rdsadmin",
-        "template0",
-        "template1",
-    ],
-    role=[
-        "rdstopmgr",
-        "rdsrepladmin",
-        "rdsadmin",
-        "rds_superuser",
-        "rds_replication",
-        "rds_password",
-        "rds_iam",
-        "rds_ad",
-        "datadog_agent",
-        "change_owner",
-    ],
-    schema=[
-        "pg_catalog",
-        "information_schema",
-        "datadog",
-    ],
-    table=[
-        "pg_stat_statements",
-    ],
-)
+
+def load_config(conf_file):
+    with open(conf_file, "r") as f:
+        conf = yaml.safe_load(f)
+    return conf
+
+
+_config = load_config(CONFIG_FILE)
+ignores = Ignores(**_config["ignores"])
+inputs_dir = _config["inputs_dir"]
