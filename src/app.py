@@ -7,6 +7,7 @@ import os
 
 import psycopg2
 import psycopg2.extras
+import yaml
 from icecream import ic
 
 from commands import commands as cmd
@@ -100,7 +101,13 @@ def main():
             continue
 
         with open(os.path.join(inputs_dir, file_name)) as f:
-            instances = json.load(f)
+            ext = os.path.splitext(file_name)[1]
+            if ext == ".json":
+                instances = json.load(f)
+            elif ext == ".yaml":
+                instances = yaml.safe_load(f)
+            else:
+                raise IOError(f"Not supported format for '{file_name}'")
 
         for _, conn_info in instances.items():
             ignores.role.append(conn_info["user"])
