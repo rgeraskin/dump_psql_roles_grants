@@ -4,6 +4,7 @@
 import click
 
 from get_data import get_data_from_psql
+from table import dump_table, get_table_formats
 
 
 @click.group()
@@ -29,22 +30,19 @@ def cli():
     show_default=True,
     help="what to export",
 )
-# @click.option(
-#     "--dump-in-format",
-#     "-f",
-#     type=click.Choice(["csv", "xlsx", "yaml"]),
-#     help="dump results in specified format",
-# )
-def export(
-    print_,
-    what,
-    # dump_in_format,
-):
+@click.option(
+    "--dump-in-format",
+    "-f",
+    default="Csv",
+    type=click.Choice(get_table_formats()),
+    help="dump results in specified table format",
+)
+def export(print_, what, dump_in_format):
     """Export instance data"""
 
-    get_data_from_psql(print_, what)
-    # if dump_in_format:
-    #     logging.error("Not implemented")
+    data = get_data_from_psql(what)
+
+    dump_table(print_, what, data, dump_in_format)
 
 
 if __name__ == "__main__":

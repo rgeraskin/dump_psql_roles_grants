@@ -101,7 +101,21 @@ def get_tables_info(dbname, user, host, password):
     return tables_info
 
 
-def get_data_from_psql(print_, what):
+def get_instances(file_name):
+    """Get data from input files"""
+
+    with open(os.path.join(inputs_dir, file_name), encoding="utf8") as f:
+        ext = os.path.splitext(file_name)[1]
+        if ext == ".json":
+            instances = json.load(f)
+        elif ext == ".yaml":
+            instances = yaml.safe_load(f)
+        else:
+            raise IOError(f"Not supported format for '{file_name}'")
+    return instances
+
+
+def get_data_from_psql(what):
     """Get databases and roles info"""
 
     result = {}
@@ -131,21 +145,6 @@ def get_data_from_psql(print_, what):
                         **conn_info | {"dbname": dbname}
                     )  # pylint: disable=undefined-loop-variable
 
-    if print_:
-        ic.enable()
-        ic(result)
+    # ic.enable()
+    # ic(result)
     return result
-
-
-def get_instances(file_name):
-    """Get data from input files"""
-
-    with open(os.path.join(inputs_dir, file_name), encoding="utf8") as f:
-        ext = os.path.splitext(file_name)[1]
-        if ext == ".json":
-            instances = json.load(f)
-        elif ext == ".yaml":
-            instances = yaml.safe_load(f)
-        else:
-            raise IOError(f"Not supported format for '{file_name}'")
-    return instances

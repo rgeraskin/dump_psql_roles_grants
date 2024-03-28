@@ -1,9 +1,12 @@
-# pylint: disable=missing-module-docstring,missing-class-docstring
+"""Dataclasses for app to be able to access to props by dot"""
+
 from dataclasses import dataclass
 
 
 @dataclass
-class Commands():
+class Commands:
+    """Sql commands spec"""
+
     dt: str
     du: str
     get_schemas: str
@@ -12,9 +15,13 @@ class Commands():
 
 
 @dataclass
-class Ignores():
+class Ignores:
+    """Ignores spec"""
+
     db: list
     inputs: list
     role: list
     schema: list
     table: list
+    result_table_column_databases: list
+    result_table_column_roles: list
