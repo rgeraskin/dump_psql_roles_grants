@@ -13,10 +13,10 @@ from icecream import ic
 from commands import commands as cmd
 from config import ignores, inputs_dir
 
-DEBUG_DB_INCLUDE_ONLY = ["dev-wallet"]
-DEBUG_DB_NUM = 20
-# DEBUG_DB_INCLUDE_ONLY = []
-# DEBUG_DB_NUM = None
+# DEBUG_DB_INCLUDE_ONLY = ["dev-wallet"]
+# DEBUG_DB_NUM = 20
+DEBUG_DB_INCLUDE_ONLY = []
+DEBUG_DB_NUM = None
 
 
 def get_something(cur, sql, ignore_columns, ignore_rows=None):
@@ -98,6 +98,7 @@ def get_tables_info(dbname, user, host, password):
                         del tables_perm[table]
                 if tables_perm:
                     tables_info[schema] = tables_perm
+    ic.enable()
     return tables_info
 
 
@@ -123,14 +124,14 @@ def get_data_from_psql(what):
         input_ = os.path.splitext(file_name)[0]
         if input_ in ignores.inputs:
             continue
-        result[input_] = {}
+        result[ic(input_)] = {}
 
         instances = get_instances(file_name)
 
         for instance, conn_info in instances.items():
             ignores.role.append(conn_info["user"])
             instance_info = get_instance_info(what, **conn_info)
-            result[input_][instance] = instance_info
+            result[input_][ic(instance)] = instance_info
 
             if what != "roles":
                 databases = result[input_][instance]["databases"]
