@@ -82,12 +82,12 @@ def get_tables_info(dbname, user, host, password):
                 owners = ic(get_owners(cur, schema))
                 tables_perm = ic(get_tables_perms(cur, schema))
                 for table in owners:
-                    tables_perm[table] = tables_perm[table] | owners[table]
-                # for table in list(tables_perm):
-                #     if (tables_perm[table]['Access privileges'] is None
-                #             and tables_perm[table]['Column privileges'] == ''
-                #             and tables_perm[table]['Policies'] == ''):
-                #         del tables_perm[table]
+                    tables_perm[table] |= owners[table]
+                for table in list(tables_perm):
+                    type_ = tables_perm[table]["Type"]
+                    del tables_perm[table]["Type"]
+                    if type_ != "table":
+                        del tables_perm[table]
                 if tables_perm:
                     tables_info[schema] = tables_perm
     return tables_info
