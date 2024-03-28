@@ -1,5 +1,5 @@
-#!/usr/bin/env python3
-# pylint: disable=missing-module-docstring,missing-function-docstring,unspecified-encoding
+"""Get data from psql"""
+
 # flake8: noqa E501
 
 import json
@@ -20,6 +20,8 @@ DEBUG_DB_NUM = 20
 
 
 def get_something(cur, sql, ignore_columns, ignore_rows=None):
+    """Common func to get something from psql"""
+
     something = {}
     cur.execute(sql)
     for row in cur.fetchall():
@@ -34,7 +36,8 @@ def get_something(cur, sql, ignore_columns, ignore_rows=None):
     return something
 
 
-def get_instance_info(dbname, user, host, password):
+def get_instance_info(what, dbname, user, host, password):
+    """Get info about instance: databases and roles"""
 
     def get_databases(cur):
         return get_something(cur, cmd.l, ["Name"], ignores.db)
@@ -42,20 +45,25 @@ def get_instance_info(dbname, user, host, password):
     def get_roles(cur):
         return get_something(cur, cmd.du, ["rolname"], ignores.role)
 
+    instance_info = {}
     conn_str = f"{dbname=} {user=} {host=} {password=} connect_timeout=3"
     with psycopg2.connect(conn_str) as conn:
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            databases = get_databases(cur)
-            if DEBUG_DB_INCLUDE_ONLY:
-                for db in list(databases):
-                    if db not in DEBUG_DB_INCLUDE_ONLY:
-                        del databases[db]
+            if what != "roles":
+                databases = get_databases(cur)
+                if DEBUG_DB_INCLUDE_ONLY:
+                    for db in list(databases):
+                        if db not in DEBUG_DB_INCLUDE_ONLY:
+                            del databases[db]
+                instance_info["databases"] = databases
+            if what != "databases":
+                instance_info["roles"] = get_roles(cur)
 
-            instance_info = {"databases": databases, "roles": get_roles(cur)}
     return instance_info
 
 
 def get_tables_info(dbname, user, host, password):
+    """Get info about tables: schemas, owners, perms"""
 
     def get_schemas(cur):
         ignore_columns = ["Name"]
@@ -93,7 +101,9 @@ def get_tables_info(dbname, user, host, password):
     return tables_info
 
 
-def main():
+def get_data_from_psql(print_, what):
+    """Get databases and roles info"""
+
     result = {}
     for file_name in os.listdir(inputs_dir):
         input_ = os.path.splitext(file_name)[0]
@@ -101,35 +111,41 @@ def main():
             continue
         result[input_] = {}
 
-        with open(os.path.join(inputs_dir, file_name)) as f:
-            ext = os.path.splitext(file_name)[1]
-            if ext == ".json":
-                instances = json.load(f)
-            elif ext == ".yaml":
-                instances = yaml.safe_load(f)
-            else:
-                raise IOError(f"Not supported format for '{file_name}'")
+        instances = get_instances(file_name)
 
         for instance, conn_info in instances.items():
             ignores.role.append(conn_info["user"])
-            instance_info = get_instance_info(**conn_info)
+            instance_info = get_instance_info(what, **conn_info)
             result[input_][instance] = instance_info
 
-            databases = result[input_][instance]["databases"]
-            databases_number = len(databases)
-            ic(databases_number)
-            for count, dbname in enumerate(list(databases)[:DEBUG_DB_NUM]):
-                if DEBUG_DB_INCLUDE_ONLY and dbname not in DEBUG_DB_INCLUDE_ONLY:
-                    continue
-                count_str = f"{count:03}/{databases_number}"
-                ic(count_str, dbname)
-                databases[dbname]["Schemas"] = get_tables_info(
-                    **conn_info | {"dbname": dbname}
-                )  # pylint: disable=undefined-loop-variable
+            if what != "roles":
+                databases = result[input_][instance]["databases"]
+                databases_number = len(databases)
+                ic(databases_number)
+                for count, dbname in enumerate(list(databases)[:DEBUG_DB_NUM]):
+                    if DEBUG_DB_INCLUDE_ONLY and dbname not in DEBUG_DB_INCLUDE_ONLY:
+                        continue
+                    count_str = f"{count:03}/{databases_number}"
+                    ic(count_str, dbname)
+                    databases[dbname]["Schemas"] = get_tables_info(
+                        **conn_info | {"dbname": dbname}
+                    )  # pylint: disable=undefined-loop-variable
+
+    if print_:
+        ic.enable()
+        ic(result)
     return result
 
 
-if __name__ == "__main__":
-    res = main()
-    ic.enable()
-    ic(res)
+def get_instances(file_name):
+    """Get data from input files"""
+
+    with open(os.path.join(inputs_dir, file_name), encoding="utf8") as f:
+        ext = os.path.splitext(file_name)[1]
+        if ext == ".json":
+            instances = json.load(f)
+        elif ext == ".yaml":
+            instances = yaml.safe_load(f)
+        else:
+            raise IOError(f"Not supported format for '{file_name}'")
+    return instances
