@@ -99,6 +99,7 @@ def main():
         input_ = os.path.splitext(file_name)[0]
         if input_ in ignores.inputs:
             continue
+        result[input_] = {}
 
         with open(os.path.join(inputs_dir, file_name)) as f:
             ext = os.path.splitext(file_name)[1]
@@ -109,12 +110,12 @@ def main():
             else:
                 raise IOError(f"Not supported format for '{file_name}'")
 
-        for _, conn_info in instances.items():
+        for instance, conn_info in instances.items():
             ignores.role.append(conn_info["user"])
             instance_info = get_instance_info(**conn_info)
-            result[input_] = instance_info
+            result[input_][instance] = instance_info
 
-            databases = result[input_]["databases"]
+            databases = result[input_][instance]["databases"]
             databases_number = len(databases)
             ic(databases_number)
             for count, dbname in enumerate(list(databases)[:DEBUG_DB_NUM]):
@@ -122,7 +123,7 @@ def main():
                     continue
                 count_str = f"{count:03}/{databases_number}"
                 ic(count_str, dbname)
-                result[input_]["databases"][dbname]["schemas"] = get_tables_info(
+                databases[dbname]["Schemas"] = get_tables_info(
                     **conn_info | {"dbname": dbname}
                 )  # pylint: disable=undefined-loop-variable
     return result
