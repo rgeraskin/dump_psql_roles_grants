@@ -1,8 +1,11 @@
-inputs_dir: ./inputs
+inputs_dir: ./_inputs
+results_dir: ./_results
 
 ignores:
   inputs:
-    - stage
+    # []
+    - dev
+    # - stage
     - test
     - prod
   db:
@@ -27,3 +30,31 @@ ignores:
     - datadog
   table:
     - pg_stat_statements
+  result_table_column_databases:
+    []
+    # - Env
+    # - Instance name
+    # - Database
+    # - Owner
+    # - Access privileges
+    # - Schema
+    # - Table
+    # - Table owner
+    # - Access privileges
+    # - Column privileges
+    # - Policies
+  result_table_column_roles:
+    []
+    # - Env
+    # - Instance name
+    # - Role name
+    # - rolbypassrls
+    # - rolcanlogin
+    # - rolconnlimit
+    # - rolcreatedb
+    # - rolcreaterole
+    # - rolinherit
+    # - rolreplication
+    # - rolsuper
+    # - rolvaliduntil
+    # - memberof

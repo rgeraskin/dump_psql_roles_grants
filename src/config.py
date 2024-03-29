@@ -48,3 +48,4 @@ def load_config(conf_file):
 _config = load_config(CONFIG_FILE)
 ignores = Ignores(**_config["ignores"])
 inputs_dir = _config["inputs_dir"]
+results_dir = _config["results_dir"]

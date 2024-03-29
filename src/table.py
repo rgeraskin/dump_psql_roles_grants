@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """Print and dump results in table view"""
 
+import os
+
 import pytablewriter
 from icecream import ic
 
-from config import HEADER_DB, HEADER_ROLES, ignores
+from config import HEADER_DB, HEADER_ROLES, ignores, results_dir
 
 
 def get_table_formats():
@@ -20,12 +22,11 @@ def get_table_formats():
 def fill_ignored_indices(header, ignored_cols):
     """Convert ignored header names into indices"""
 
-    ic.enable()
     ignored_indices = []
     for ignored_col in ignored_cols:
         index = header.index(ignored_col)
         ignored_indices.append(index)
-    return ic(ignored_indices)
+    return ignored_indices
 
 
 def table_filter(header, ignored_indices, rows):
@@ -40,66 +41,72 @@ def table_filter(header, ignored_indices, rows):
     return f_header, f_rows
 
 
-def table_gen_roles(roles, rows, row):
+def table_gen_roles(roles, rows, row, _):
     """Role specific table gen"""
 
     role_column = len(row)
     for role, role_props in roles.items():
-        row.append(ic(role))
-        row.append(ic(role_props["rolbypassrls"]))
-        row.append(ic(role_props["rolcanlogin"]))
-        row.append(ic(role_props["rolconnlimit"]))
-        row.append(ic(role_props["rolcreatedb"]))
-        row.append(ic(role_props["rolcreaterole"]))
-        row.append(ic(role_props["rolinherit"]))
-        row.append(ic(role_props["rolreplication"]))
-        row.append(ic(role_props["rolsuper"]))
-        row.append(ic(role_props["rolvaliduntil"]))
-        row.append(ic("\n".join(role_props["memberof"])))
-        rows.append(ic(row))
+        row.append(role)
+        row.append(role_props["rolbypassrls"])
+        row.append(role_props["rolcanlogin"])
+        row.append(role_props["rolconnlimit"])
+        row.append(role_props["rolcreatedb"])
+        row.append(role_props["rolcreaterole"])
+        row.append(role_props["rolinherit"])
+        row.append(role_props["rolreplication"])
+        row.append(role_props["rolsuper"])
+        row.append(role_props["rolvaliduntil"])
+        row.append("\n".join(role_props["memberof"]))
+        rows.append(row)
         row = row[:role_column]
-    return row[: role_column - 1]
 
 
-def table_gen_dbs(databases, rows, row):
+def table_gen_dbs(databases, rows, row, header):
     """Database specific table gen"""
 
+    instance_name_column = len(row)
     for db, db_props in databases.items():
-        row.append(ic(db))
-        row.append(ic(db_props["Owner"]))
-        row.append(ic(db_props["Access privileges"]))
 
-        for schema, tables in db_props["Schemas"].items():
-            row.append(ic(schema))
+        row.append(db)
+        row.append(db_props["Owner"])
+        row.append(db_props["Access privileges"])
 
-            schema_column = len(row)
-            for table, table_props in tables.items():
-                row.append(ic(table))
-                row.append(ic(table_props.get("Owner")))
-                row.append(ic(table_props.get("Access privileges")))
-                row.append(ic(table_props.get("Column privileges")))
-                row.append(ic(table_props.get("Policies")))
+        access_privileges_column = len(row)
+        if db_props["Schemas"]:
+            for schema, tables in db_props["Schemas"].items():
+                row.append(schema)
 
-                rows.append(ic(row))
-                row = row[:schema_column]
-            row = row[: schema_column - 1]
-    return row
+                schema_column = len(row)
+                for table, table_props in tables.items():
+                    row.append(table)
+                    row.append(table_props.get("Owner"))
+                    row.append(table_props.get("Access privileges"))
+                    row.append(table_props.get("Column privileges"))
+                    row.append(table_props.get("Policies"))
+
+                    rows.append(row)
+                    row = row[:schema_column]
+                row = row[: schema_column - 1]
+        else:
+            row += [""] * (len(header) - len(row))
+            rows.append(row)
+            row = row[: access_privileges_column - 3]
+        row = row[:instance_name_column]
 
 
 def table_gen(conts, entity, entity_func, header, ignored_cols):
     """Generate common part of a table"""
 
     ignored_indices = fill_ignored_indices(header, ignored_cols)
-    ic.disable()
 
     rows = []
     for input_, instances in conts.items():
-        row = []
-        row.append(ic(input_))
-
+        ic(input_, len(instances))
         for instance, entities in instances.items():
-            row.append(ic(instance))
-            row = entity_func(entities[entity], rows, row)
+            row = []
+            row.append(input_)
+            row.append(instance)
+            entity_func(entities[entity], rows, row, header)
 
     header, rows = table_filter(header, ignored_indices, rows)
     # print(len(header), header)
@@ -128,7 +135,9 @@ def table_write(
     if print_:
         writer.write_table()
     if dump:
-        writer.dump(f"{table_name}.{fmt.lower()}")
+        os.makedirs(results_dir, exist_ok=True)
+        results_file = f"{table_name}.{fmt.lower()}"
+        writer.dump(os.path.join(results_dir, results_file))
 
 
 def dump_table(print_, what, data, fmt):
@@ -152,8 +161,9 @@ def dump_table(print_, what, data, fmt):
     elif what == "databases":
         del entities["roles"]
 
-    for entity, vals in entities.items():
-        headers, rows = table_gen(**(vals | {"conts": data, "entity": entity}))
+    ic(bool(data))
+    for entity, settings in entities.items():
+        headers, rows = table_gen(**(settings | {"conts": data, "entity": entity}))
         if print_:
             table_write(entity, headers, rows, print_=True, fmt="Markdown", dump=False)
         if fmt:

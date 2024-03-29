@@ -4,7 +4,9 @@
 import click
 
 from get_data import get_data_from_psql
-from table import dump_table, get_table_formats
+from table import dump_table
+
+# from table import get_table_formats
 
 
 @click.group()
@@ -34,7 +36,26 @@ def cli():
     "--dump-in-format",
     "-f",
     default="Csv",
-    type=click.Choice(get_table_formats()),
+    # type=click.Choice(get_table_formats()),
+    type=click.Choice(
+        [
+            "Abstrac",
+            "AsciiDoc",
+            "BoldUnicod",
+            "Borderless",
+            "Css",
+            "Csv",
+            "ExcelXls",
+            "ExcelXlsx",
+            "Htm",
+            "JavaScrip",
+            "JsonLines",
+            "Json",
+            "Latex",
+            "Ltsv",
+            "Markdown",
+        ]
+    ),
     help="dump results in specified table format",
 )
 def export(print_, what, dump_in_format):

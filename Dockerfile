@@ -35,10 +35,8 @@ RUN adduser \
 # Leverage a bind mount to requirements.txt to avoid having to copy them into
 # into this layer.
 RUN --mount=type=cache,target=/root/.cache/pip \
-    --mount=type=bind,source=requirements_common.txt,target=requirements_common.txt \
-    --mount=type=bind,source=requirements_sync.txt,target=requirements_sync.txt \
-    python -m pip install -r requirements_common.txt && \
-    python -m pip install -r requirements_sync.txt
+    --mount=type=bind,source=requirements.txt,target=requirements.txt \
+    python -m pip install -r requirements.txt
 
 # Switch to the non-privileged user to run the application.
 USER appuser
@@ -47,4 +45,5 @@ USER appuser
 COPY . .
 
 # Run the application.
-CMD python src/app.py
+ENTRYPOINT ["python", "src/cli.py"]
+CMD ["export"]
