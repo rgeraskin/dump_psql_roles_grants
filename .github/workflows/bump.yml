@@ -30,7 +30,7 @@ jobs:
         with:
           key: ${{ runner.os }}-pre-commit-${{ hashFiles('**/.pre-commit-config.yaml') }}
           path: ~/.cache/pre-commit
-      - name: Run pre-commit
+      - name: "Run pre-commit"
         uses: pre-commit/action@v3.0.1
       - name: Bump version
         id: bump
