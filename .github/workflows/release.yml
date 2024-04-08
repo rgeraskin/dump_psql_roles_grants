@@ -62,7 +62,7 @@ jobs:
         run: |
           git fetch --tags
           cz changelog --dry-run ${{ github.ref_name }} | tail -n +3 > changelog
-          echo "changelog<<EOF" | tee -a "$GITHUB_OUTPUT"
+          echo "changelog=<<EOF" | tee -a "$GITHUB_OUTPUT"
           cat < changelog | tee -a "$GITHUB_OUTPUT"
           echo EOF | tee -a "$GITHUB_OUTPUT"
       - name: Create Release
