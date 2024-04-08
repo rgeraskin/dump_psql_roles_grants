@@ -1,9 +1,12 @@
 [tool.poetry]
 name = "dump-psql-roles-grants"
 version = "0.2.0"
-description = "Dump Postgres Roles Grants"
+description = "Dump Postgres Roles and Grants"
 authors = ["Roman Geraskin <roman.n.geraskin@gmail.com>"]
 readme = "README.md"
+license = "MIT"
+repository = "https://github.com/rgeraskin/dump_psql_roles_grants"
+keywords = ["postgres", "psql", "roles", "grants", "dump"]
 
 [tool.poetry.dependencies]
 python = "^3.12"
