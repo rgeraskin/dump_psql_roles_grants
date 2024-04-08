@@ -48,8 +48,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-tags: true
+        # with:
+        #   fetch-tags: true
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -60,6 +60,7 @@ jobs:
           pip install commitizen
       - name: Generate Changelog
         run: |
+          git tag -l
           changelog=$(cz changelog --dry-run ${{ github.ref_name }} | tail -n +3)
           echo "changelog=$changelog" | tee -a "$GITHUB_OUTPUT"
       - name: Create Release
