@@ -71,4 +71,4 @@ jobs:
           body: |
             Changes in this Release
 
-            {{ steps.generate_changelog.outputs.changelog }}
+            ${{ steps.generate_changelog.outputs.changelog }}
