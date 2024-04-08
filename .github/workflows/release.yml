@@ -48,6 +48,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -59,7 +61,6 @@ jobs:
       - name: Generate Changelog
         run: |
           git fetch --tags
-          git tag -l
           changelog=$(cz changelog --dry-run ${{ github.ref_name }} | tail -n +3)
           echo "changelog=$changelog" | tee -a "$GITHUB_OUTPUT"
       - name: Create Release
