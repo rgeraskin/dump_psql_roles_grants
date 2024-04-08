@@ -61,8 +61,10 @@ jobs:
       - name: Generate Changelog
         run: |
           git fetch --tags
-          changelog=$(cz changelog --dry-run ${{ github.ref_name }} | tail -n +3)
-          echo "changelog=$changelog" | tee -a "$GITHUB_OUTPUT"
+          cz changelog --dry-run ${{ github.ref_name }} | tail -n +3 > changelog
+          echo "changelog<<EOF" | tee -a "$GITHUB_OUTPUT"
+          cat < changelog | tee -a "$GITHUB_OUTPUT"
+          echo EOF | tee -a "$GITHUB_OUTPUT"
       - name: Create Release
         id: create_release
         uses: actions/create-release@latest
