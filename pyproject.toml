@@ -16,7 +16,7 @@ psycopg-infdate = "^1.0.3"
 PyYAML = "^6.0.1"
 
 [tool.poetry.scripts]
-cli = "dump_psql_roles_grants.cli:cli"
+dump_psql_roles_grants = "dump_psql_roles_grants.cli:cli"
 
 
 [tool.commitizen]
