@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dump-psql-roles-grants"
-version = "0.1.0"
+version = "0.2.0"
 description = "Dump Postgres Roles Grants"
 authors = ["Roman Geraskin <roman.n.geraskin@gmail.com>"]
 readme = "README.md"
