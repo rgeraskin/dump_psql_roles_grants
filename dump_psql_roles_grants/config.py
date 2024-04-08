@@ -2,7 +2,7 @@
 
 import yaml
 
-from classes import Ignores
+from dump_psql_roles_grants.classes import Ignores
 
 CONFIG_FILE = "config.yaml"
 

@@ -1,7 +1,7 @@
 # pylint: disable=missing-module-docstring
 # flake8: noqa E501
 
-from classes import Commands
+from dump_psql_roles_grants.classes import Commands
 
 commands = Commands(
     # \l

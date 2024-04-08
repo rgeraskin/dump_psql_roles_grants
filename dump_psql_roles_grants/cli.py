@@ -3,8 +3,8 @@
 
 import click
 
-from get_data import get_data_from_psql
-from table import dump_table
+from dump_psql_roles_grants.get_data import get_data_from_psql
+from dump_psql_roles_grants.table import dump_table
 
 # from table import get_table_formats
 
@@ -64,7 +64,3 @@ def export(print_, what, dump_in_format):
     data = get_data_from_psql(what)
 
     dump_table(print_, what, data, dump_in_format)
-
-
-if __name__ == "__main__":
-    cli()

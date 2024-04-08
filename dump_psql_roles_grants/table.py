@@ -6,7 +6,7 @@ import os
 import pytablewriter
 from icecream import ic
 
-from config import HEADER_DB, HEADER_ROLES, ignores, results_dir
+from dump_psql_roles_grants.config import HEADER_DB, HEADER_ROLES, ignores, results_dir
 
 
 def get_table_formats():

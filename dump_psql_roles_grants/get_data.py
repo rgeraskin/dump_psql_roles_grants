@@ -12,8 +12,8 @@ import yaml
 from icecream import ic
 from psycopg.rows import dict_row
 
-from commands import commands as cmd
-from config import ignores, inputs_dir
+from dump_psql_roles_grants.commands import commands as cmd
+from dump_psql_roles_grants.config import ignores, inputs_dir
 
 # DEBUG_DB_INCLUDE_ONLY = ["dev-wallet"]
 # DEBUG_DB_NUM = 2
