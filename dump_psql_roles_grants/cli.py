@@ -14,7 +14,7 @@ from dump_psql_roles_grants.table import dump_table
 @click.group()
 # @click.option("-v", "--verbose", count=True)
 def cli():
-    """CLI group function"""
+    """Dump Postgres Roles and Grants"""
 
 
 @cli.command()

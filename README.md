@@ -1,13 +1,31 @@
 # Dump Postgres Roles and Grants
 
-## Build
+## Install
+
+### pipx
 
 ```shell
-docker buildx build -t dump_psql_roles_grants .
+pipx install dump-psql-roles-grants
+dump-psql-roles-grants --help
+```
+
+### pip
+
+```shell
+pip install dump-psql-roles-grants
+python -m dump_psql_roles_grants --help
+```
+
+### docker
+
+```shell
+docker pull rgeraskin/dump_psql_roles_grants
+docker run --name dump_psql_roles_grants --rm rgeraskin/dump_psql_roles_grants --help
 ```
 
 ## Usage
 
+1. Generate an example config file `dump_psql_roles_grants gen-example-config -o config.yaml`
 1. Place instances connection info to `_inputs` dir
 
    ```shell
@@ -39,5 +57,5 @@ docker buildx build -t dump_psql_roles_grants .
 1. Run
 
    ```shell
-   docker run -it --rm -v ${PWD}/_inputs:/app/_inputs -v ${PWD}/_results:/app/_results dump_psql_roles_grants -- --help
+   dump_psql_roles_grants --help
    ```
