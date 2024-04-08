@@ -10,7 +10,7 @@ docker buildx build -t dump_psql_roles_grants .
 
 1. Place instances connection info to `_inputs` dir
 
-   ```
+   ```shell
    _inputs/
    ├── dev.yaml
    ├── prod.yaml

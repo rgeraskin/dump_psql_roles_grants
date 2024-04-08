@@ -123,7 +123,7 @@ def table_write(
     print_=False,
     dump=False,
     fmt="Markdown",
-):
+):  # pylint: disable=too-many-arguments
     """Print and dump results in table view implementation"""
 
     writer = getattr(pytablewriter, f"{fmt}TableWriter")(

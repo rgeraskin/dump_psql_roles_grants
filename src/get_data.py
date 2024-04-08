@@ -42,7 +42,9 @@ def get_something(cur, sql, ignore_columns, ignore_rows=None):
     return something
 
 
-def get_tables_info(input_, instance, dbname, user, host, password):
+def get_tables_info(
+    input_, instance, dbname, user, host, password
+):  # pylint: disable=too-many-arguments, too-many-locals
     """Get info about tables: schemas, owners, perms"""
 
     def get_schemas(cur):
@@ -95,7 +97,9 @@ def get_tables_info(input_, instance, dbname, user, host, password):
     result[input_][instance]["databases"][dbname]["Schemas"] = tables_info
 
 
-def get_instance_info(what, input_, instance, dbname, user, host, password):
+def get_instance_info(
+    what, input_, instance, dbname, user, host, password
+):  # pylint: disable=too-many-arguments
     """Get info about instance: databases and roles"""
 
     def get_databases(cur):
