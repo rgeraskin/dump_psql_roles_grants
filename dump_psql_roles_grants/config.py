@@ -2,10 +2,6 @@
 
 import yaml
 
-from dump_psql_roles_grants.classes import Ignores
-
-CONFIG_FILE = "config.yaml"
-
 HEADER_DB = [
     "Env",
     "Instance name",
@@ -40,12 +36,12 @@ HEADER_ROLES = [
 def load_config(conf_file):
     """Load config from file"""
 
-    with open(conf_file, "r", encoding="utf8") as f:
-        conf = yaml.safe_load(f)
+    try:
+        with open(conf_file, "r", encoding="utf8") as f:
+            conf = yaml.safe_load(f)
+    except FileNotFoundError as exc:
+        raise SystemExit(
+            f"Config file {conf_file} not found. "
+            "You can create it with `dump_psql_roles_grants gen-example-config`"
+        ) from exc
     return conf
-
-
-_config = load_config(CONFIG_FILE)
-ignores = Ignores(**_config["ignores"])
-inputs_dir = _config["inputs_dir"]
-results_dir = _config["results_dir"]

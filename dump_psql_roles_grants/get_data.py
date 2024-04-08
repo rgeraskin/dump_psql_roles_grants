@@ -13,7 +13,6 @@ from icecream import ic
 from psycopg.rows import dict_row
 
 from dump_psql_roles_grants.commands import commands as cmd
-from dump_psql_roles_grants.config import ignores, inputs_dir
 
 # DEBUG_DB_INCLUDE_ONLY = ["dev-wallet"]
 # DEBUG_DB_NUM = 2
@@ -43,7 +42,7 @@ def get_something(cur, sql, ignore_columns, ignore_rows=None):
 
 
 def get_tables_info(
-    input_, instance, dbname, user, host, password
+    input_, instance, dbname, user, host, password, ignores
 ):  # pylint: disable=too-many-arguments, too-many-locals
     """Get info about tables: schemas, owners, perms"""
 
@@ -98,8 +97,8 @@ def get_tables_info(
 
 
 def get_instance_info(
-    what, input_, instance, dbname, user, host, password
-):  # pylint: disable=too-many-arguments
+    what, input_, instance, ignores, dbname, user, host, password
+):  # pylint: disable=too-many-arguments, too-many-locals
     """Get info about instance: databases and roles"""
 
     def get_databases(cur):
@@ -129,10 +128,12 @@ def get_instance_info(
     result[input_][instance] = instance_info
 
 
-def process_instance(input_, instance, conn_info, what, count_str_instance):
+def process_instance(
+    input_, instance, conn_info, what, count_str_instance, ignores
+):  # pylint: disable=too-many-arguments
     """Get data for instance"""
 
-    get_instance_info(what, input_, instance, **conn_info)
+    get_instance_info(what, input_, instance, ignores, **conn_info)
 
     if what != "roles":
         databases = result[input_][instance]["databases"]
@@ -150,7 +151,13 @@ def process_instance(input_, instance, conn_info, what, count_str_instance):
             ic(input_, instance, count_str_instance, dbname, count_str_db)
 
             get_tables_info(
-                **conn_info | {"input_": input_, "instance": instance, "dbname": dbname}
+                **conn_info
+                | {
+                    "input_": input_,
+                    "instance": instance,
+                    "dbname": dbname,
+                    "ignores": ignores,
+                }
             )
 
         # asyncio.gather(
@@ -164,7 +171,7 @@ def process_instance(input_, instance, conn_info, what, count_str_instance):
         # )
 
 
-def process_input_(input_, instances, what):
+def process_input_(input_, instances, what, ignores):
     """Get data for input"""
 
     # add root user to ignore roles list
@@ -183,10 +190,10 @@ def process_input_(input_, instances, what):
         count_str_instance = (
             f"{count+1:{0}{len(str(instances_number))}}/{instances_number}"
         )
-        process_instance(input_, instance, conn_info, what, count_str_instance)
+        process_instance(input_, instance, conn_info, what, count_str_instance, ignores)
 
 
-def get_instances(file_name):
+def get_instances(file_name, inputs_dir):
     """Get data from input files"""
 
     with open(os.path.join(inputs_dir, file_name), encoding="utf8") as f:
@@ -200,7 +207,7 @@ def get_instances(file_name):
     return instances
 
 
-def get_data_from_psql(what):
+def get_data_from_psql(what, inputs_dir, ignores):
     """Get databases and roles info main func"""
 
     inputs_dict = {}
@@ -208,7 +215,7 @@ def get_data_from_psql(what):
         input_ = os.path.splitext(file_name)[0]
         if input_ in ignores.inputs:
             continue
-        inputs_dict[input_] = get_instances(file_name)
+        inputs_dict[input_] = get_instances(file_name, inputs_dir)
 
     # asyncio.gather(
     #     *(
@@ -219,7 +226,7 @@ def get_data_from_psql(what):
 
     for input_, instances in inputs_dict.items():
         result[input_] = {}
-        process_input_(input_, instances, what)
+        process_input_(input_, instances, what, ignores)
     return ic(result)
 
 

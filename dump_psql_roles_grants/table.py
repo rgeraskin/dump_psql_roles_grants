@@ -6,7 +6,7 @@ import os
 import pytablewriter
 from icecream import ic
 
-from dump_psql_roles_grants.config import HEADER_DB, HEADER_ROLES, ignores, results_dir
+from dump_psql_roles_grants.config import HEADER_DB, HEADER_ROLES
 
 
 def get_table_formats():
@@ -123,6 +123,7 @@ def table_write(
     print_=False,
     dump=False,
     fmt="Markdown",
+    results_dir=".",
 ):  # pylint: disable=too-many-arguments
     """Print and dump results in table view implementation"""
 
@@ -140,7 +141,9 @@ def table_write(
         writer.dump(os.path.join(results_dir, results_file))
 
 
-def dump_table(print_, what, data, fmt):
+def dump_table(
+    print_, what, data, fmt, results_dir, ignores
+):  # pylint: disable=too-many-arguments
     """Print and dump results in table view main func"""
 
     entities = {
@@ -165,6 +168,22 @@ def dump_table(print_, what, data, fmt):
     for entity, settings in entities.items():
         headers, rows = table_gen(**(settings | {"conts": data, "entity": entity}))
         if print_:
-            table_write(entity, headers, rows, print_=True, fmt="Markdown", dump=False)
+            table_write(
+                entity,
+                headers,
+                rows,
+                print_=True,
+                fmt="Markdown",
+                dump=False,
+                results_dir=results_dir,
+            )
         if fmt:
-            table_write(entity, headers, rows, print_=False, fmt=fmt, dump=True)
+            table_write(
+                entity,
+                headers,
+                rows,
+                print_=False,
+                fmt=fmt,
+                dump=True,
+                results_dir=results_dir,
+            )
