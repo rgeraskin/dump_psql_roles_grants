@@ -1,6 +1,14 @@
 # Changelog
 
+## 0.3.1 (2024-04-10)
+
+### Feat
+
+- **cli**: add version_option
+
 ## 0.2.3 (2024-04-10)
+
+- build: publish brew formula on release
 
 ## 0.2.2 (2024-04-09)
 
