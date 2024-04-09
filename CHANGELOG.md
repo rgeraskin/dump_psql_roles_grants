@@ -1,5 +1,7 @@
 # Changelog
 
+## 0.2.3 (2024-04-10)
+
 ## 0.2.2 (2024-04-09)
 
 - extract psycopg-binary as extra dep
