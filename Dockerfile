@@ -8,9 +8,8 @@ WORKDIR /app
 COPY pyproject.toml poetry.lock ./
 
 # Install Poetry and dependencies
-RUN pip install poetry
-RUN poetry self add poetry-plugin-export
-RUN poetry export -o requirements.txt
+RUN pip install poetry poetry-plugin-export
+RUN poetry export --extras=binary -o requirements.txt
 
 # Stage 2: Final
 FROM python:${PYTHON_VERSION} AS production

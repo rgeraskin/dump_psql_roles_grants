@@ -209,7 +209,7 @@ test = ["anyio (>=3.6.2,<4.0)", "mypy (>=1.4.1)", "pproxy (>=2.7)", "pytest (>=6
 name = "psycopg-binary"
 version = "3.1.18"
 description = "PostgreSQL database adapter for Python -- C optimisation distribution"
-optional = false
+optional = true
 python-versions = ">=3.7"
 files = [
     {file = "psycopg_binary-3.1.18-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:5c323103dfa663b88204cf5f028e83c77d7a715f9b6f51d2bbc8184b99ddd90a"},
@@ -550,7 +550,10 @@ files = [
     {file = "tzdata-2024.1.tar.gz", hash = "sha256:2674120f8d891909751c38abcdfd386ac0a5a1127954fbc332af6b5ceae07efd"},
 ]
 
+[extras]
+binary = ["psycopg-binary"]
+
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "d3e04698285179c5d8118aaf9bb1e543b1d2bbf9d935a686a3c90d47dfceeadd"
+content-hash = "230f81f4092341a9ed79ad5cd9734e84765f76bd7a527d679bea42df81da283b"

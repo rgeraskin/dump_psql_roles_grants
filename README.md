@@ -2,17 +2,22 @@
 
 ## Install
 
+You can choose
+
+- plain python package `dump-psql-roles-grants` that requires `libpq` system library
+- or package `dump-psql-roles-grants[binary]` that have binaries included
+
 ### pipx
 
 ```shell
-pipx install dump-psql-roles-grants
+pipx install 'dump-psql-roles-grants[binary]'
 dump-psql-roles-grants --help
 ```
 
 ### pip
 
 ```shell
-pip install dump-psql-roles-grants
+pip install 'dump-psql-roles-grants[binary]'
 python -m dump_psql_roles_grants --help
 ```
 
