@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.1 (2024-04-09)
+
+- update readme
+- add licence
+- add more meta info
+
 ## 0.2.0 (2024-04-08)
 
 ### Feat

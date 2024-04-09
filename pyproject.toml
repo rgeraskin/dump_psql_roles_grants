@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dump-psql-roles-grants"
-version = "0.2.0"
+version = "0.2.1"
 description = "Dump Postgres Roles and Grants"
 authors = ["Roman Geraskin <roman.n.geraskin@gmail.com>"]
 readme = "README.md"
@@ -20,7 +20,6 @@ PyYAML = "^6.0.1"
 
 [tool.poetry.scripts]
 dump_psql_roles_grants = "dump_psql_roles_grants.cli:cli"
-
 
 [tool.commitizen]
 name = "cz_conventional_commits"
