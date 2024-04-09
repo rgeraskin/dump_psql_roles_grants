@@ -7,11 +7,18 @@ You can choose
 - plain python package `dump-psql-roles-grants` that requires `libpq` system library
 - or package `dump-psql-roles-grants[binary]` that have binaries included
 
-### pipx
+### pipx (preferred)
 
 ```shell
 pipx install 'dump-psql-roles-grants[binary]'
-dump-psql-roles-grants --help
+dump_psql_roles_grants --help
+```
+
+### brew
+
+```shell
+brew install rgeraskin/homebrew/dump-psql-roles-grants
+dump_psql_roles_grants --help
 ```
 
 ### pip
