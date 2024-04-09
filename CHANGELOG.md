@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.2 (2024-04-09)
+
+- extract psycopg-binary as extra dep
+
 ## 0.2.1 (2024-04-09)
 
 - update readme
