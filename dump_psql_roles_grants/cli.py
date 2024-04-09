@@ -3,6 +3,7 @@
 
 import click
 
+from dump_psql_roles_grants.__version__ import __version__
 from dump_psql_roles_grants.classes import Ignores
 from dump_psql_roles_grants.config import load_config
 from dump_psql_roles_grants.get_data import get_data_from_psql
@@ -12,6 +13,7 @@ from dump_psql_roles_grants.table import dump_table
 
 
 @click.group()
+@click.version_option(__version__)
 # @click.option("-v", "--verbose", count=True)
 def cli():
     """Dump Postgres Roles and Grants"""
